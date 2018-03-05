@@ -569,7 +569,7 @@ public:
 		while (line.size() < result.vertexAmount)
 		{
 			min = -1;
-			for each (int item in line)
+			for (int item=1; item<line.size();item++)
 			{
 				minInLine = -1;
 				minIndx = 0;
@@ -588,12 +588,10 @@ public:
 				}
 			}
 			line.push_back(idx + 1);
-			cout << line[line.size() - 1];
 		}
 		for (int i = 0; i < line.size(); i++)
 			for (int j = 0; j < line.size(); j++)
 				resMatrix[i][line[j]-1] = matrix[i][line[j]-1];
-		system("pause");
 		return result;
 	}
 };
