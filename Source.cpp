@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <tuple>
+#include <algorithm>
 using namespace std;
 char buff[100];
 string strng;
