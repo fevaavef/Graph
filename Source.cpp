@@ -23,7 +23,7 @@ public:
 	{
 		vertexAmount = N;
 	}
-	void ReadGraph(string fileName)
+	void readGraph(string fileName)
 	{
 		ifstream input(fileName);
 		input >> buff;
@@ -221,7 +221,7 @@ public:
 			}
 		}
 	}
-	void WriteGraph(string fileName)
+	void writeGraph(string fileName)
 	{
 		ofstream output(fileName);
 		if (indic == 1)
@@ -267,7 +267,7 @@ public:
 					output << get<0>(vectTuples[i]) << ' ' << get<1>(vectTuples[i]) << ' ' << get<2>(vectTuples[i]) << endl;
 		}
 	}
-	void AddEdge(int from, int to, int weight = 1)
+	void addEdge(int from, int to, int weight = 1)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = weight;
@@ -294,7 +294,7 @@ public:
 				vectTuples.push_back(tuple<int, int, int>(from, to, weight));
 		}
 	}
-	void RemoveEdge(int from, int to)
+	void removeEdge(int from, int to)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = 0;
@@ -333,7 +333,7 @@ public:
 			}
 		}
 	}
-	int ChangeEdge(int from, int to, int newWeight)
+	int changeEdge(int from, int to, int newWeight)
 	{
 		int oldWeight;
 		if (indic == 1)
@@ -368,7 +368,7 @@ public:
 				}
 		return oldWeight;
 	}
-	void TransformToAdjList()
+	void transformToAdjList()
 	{
 		if (indic == 1)
 		{
@@ -427,7 +427,7 @@ public:
 		}
 		indic = 2;
 	}
-	void TransformToListOfEdges()
+	void transformToListOfEdges()
 	{
 		if (indic == 1)
 		{
@@ -481,7 +481,7 @@ public:
 		}
 		indic = 3;
 	}
-	void TransformToAdjMatrix()
+	void transformToAdjMatrix()
 	{
 		if (indic == 2)
 		{
@@ -549,9 +549,9 @@ public:
 		}
 		indic = 1;
 	}
-	Graph GetSpaingTreePrima()
+	Graph getSpaingTreePrima()
 	{
-		if (indic != 1) TransformToAdjMatrix();
+		if (indic != 1) transformToAdjMatrix();
 		Graph result(vertexAmount);
 		vector<vector<int>> resMatrix;
 		vector<int> line;
@@ -601,8 +601,8 @@ int main(void)
 {
 	setlocale(LC_ALL, "rus");
 	Graph something;
-	something.ReadGraph("input.txt");
-	Graph result = something.GetSpaingTreePrima();
-	result.WriteGraph("output.txt");
+	something.readGraph("input.txt");
+	Graph result = something.getSpaingTreePrima();
+	result.writeGraph("output.txt");
 	cout << endl;
 }
