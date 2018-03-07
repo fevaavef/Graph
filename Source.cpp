@@ -4,22 +4,72 @@
 #include <string>
 #include <tuple>
 #include <algorithm>
+#include <cstdlib>
 using namespace std;
 char buff[100];
 string strng;
 int temp;
-vector<vector<pair<int, int>>> list;
+vector<tuple<int, int, int>> vectTuplesss;
+/*vector<vector<pair<int, int>>> list;
 vector<vector<tuple<int, int, int>>> listm;
 vector<pair<int, int>> vectPairs;
 vector<tuple<int, int, int>> vectTuples;
-vector<vector<int>> matrix;
+vector<vector<int>> matrix;*/
+
+bool TuplesCompare(const tuple<int, int, int> &lhs, const tuple<int, int, int> &rhs)
+{
+	return get<2>(lhs) < get<2>(rhs);
+}
+
+class DSU
+{
+private:
+public:
+	vector<int> p, rank;
+	bool victory = true;
+	DSU(int N)
+	{
+		for (int i = 0; i < N; i++)
+		{
+			p.push_back(i+1);
+			rank.push_back(0);
+		}
+	}
+	int find(int x)
+	{
+		if (x == 0) return -1;
+		return (x == p[x-1] ? x : p[x-1] = find(p[x-1]));
+	}
+
+	void unite(int x, int y)
+	{
+		if ((x = find(x)) == (y = find(y)))
+		{
+			victory = false;
+			return;
+		}
+
+		if (rank[x-1] <  rank[y-1])
+			p[x-1] = y;
+		else
+			p[y-1] = x;
+
+		if (rank[x-1] == rank[y-1])
+			++rank[x-1];
+	}
+};
 
 class Graph
 {
 	int indic, vertexAmount, edgesAmount;
 	bool orient, mass;
+	vector<vector<pair<int, int>>> list;
+	vector<vector<tuple<int, int, int>>> listm;
+	vector<pair<int, int>> vectPairs;
+	vector<tuple<int, int, int>> vectTuples;
+	vector<vector<int>> matrix;
 public:
-	Graph (int N=1)
+	Graph(int N = 1)
 	{
 		vertexAmount = N;
 	}
@@ -556,7 +606,7 @@ public:
 		vector<vector<int>> resMatrix;
 		vector<int> line;
 		unsigned int min = -1, minInLine;
-	    int minIndx, idx=0;
+		int minIndx, idx = 0;
 		for (int i = 0; i < result.vertexAmount; i++)
 		{
 			resMatrix.push_back(vector<int>());
@@ -570,15 +620,15 @@ public:
 		while (line.size() < result.vertexAmount)
 		{
 			min = -1;
-			for (int item=1; item<line.size();item++)
+			for (int item = 0; item<line.size(); item++)
 			{
 				minInLine = -1;
 				minIndx = 0;
-				for (int i = 0; i < resMatrix[item - 1].size(); i++)
+				for (int i = 0; i < resMatrix[item].size(); i++)
 				{
-					if (matrix[item - 1][i] < minInLine && matrix[item - 1][i]!=0 && find(line.begin(), line.end(), i + 1) == line.end())
+					if (matrix[item][i] < minInLine && matrix[item][i] != 0 && find(line.begin(), line.end(), i + 1) == line.end())
 					{
-						minInLine = matrix[item - 1][i];
+						minInLine = matrix[item][i];
 						minIndx = i;
 					}
 				}
@@ -590,11 +640,75 @@ public:
 			}
 			line.push_back(idx + 1);
 		}
-		for (int i = 0; i < line.size(); i++)
-			for (int j = 0; j < line.size(); j++)
-				resMatrix[i][line[j]-1] = matrix[i][line[j]-1];
+		for (int i = 0; i < line.size()-1; i++)
+		{
+			resMatrix[line[i] - 1][line[i + 1] - 1] = matrix[line[i] - 1][line[i + 1] - 1];
+			resMatrix[line[i + 1] - 1][line[i] - 1] = matrix[line[i + 1] - 1][line[i] - 1];
+		}
+		result.matrix = resMatrix;
 		return result;
 	}
+	Graph getSpaingTreeKruscal()
+	{
+		if (indic != 3) transformToListOfEdges();
+		Graph result(vertexAmount);
+		result.mass = true;
+		result.orient = false;
+		result.indic = 3;
+		DSU dsu(vertexAmount);
+		sort(vectTuples.begin(), vectTuples.end(), TuplesCompare);
+		for (int i = 0; i < vectTuples.size(); i++)
+		{
+			if (dsu.find(get<0>(vectTuples[i])) != dsu.find(get<1>(vectTuples[i])))
+			{
+				dsu.unite(get<0>(vectTuples[i]), get<1>(vectTuples[i]));
+				result.vectTuples.push_back(make_tuple(get<0>(vectTuples[i]), get<1>(vectTuples[i]), get<2>(vectTuples[i])));
+			}
+		}
+		return result;
+	}
+	Graph getSpaingTreeBoruvka()
+	{
+		if (indic != 3) transformToAdjList();
+		vector<tuple<int, int, int>> edges;
+		Graph result(vertexAmount);
+		result.mass = true;
+		result.orient = false;
+		result.indic = 3;
+		DSU dsu(vertexAmount);
+		int numTrees = vertexAmount;
+		for (int i = 0; i < vertexAmount; i++)
+			edges.push_back(make_tuple(0,0,0)); 
+		while (numTrees > 1)
+		{
+			for (int i = 0; i < edgesAmount; i++)
+			{
+				int from = dsu.find(get<0>(vectTuples[i])), to = dsu.find(get<1>(vectTuples[i]));
+				if (from == to)
+						continue;
+				else
+				{
+					if (get<2>(edges[from-1]) == 0 || get<2>(edges[from-1]) > get<2>(vectTuples[i]))
+						edges[from-1] = vectTuples[i];
+					if (get<2>(edges[to-1]) == 0 || get<2>(edges[to-1]) > get<2>(vectTuples[i]))
+						edges[to-1] = vectTuples[i];
+				}
+			}
+			for (int i = 0; i < edges.size(); i++)
+			{
+				if (dsu.find(get<0>(edges[i])) != dsu.find(get<1>(edges[i])))
+				{
+					dsu.unite(get<0>(edges[i]), get<1>(edges[i]));
+					result.vectTuples.push_back(make_tuple(get<0>(edges[i]), get<1>(edges[i]), get<2>(edges[i])));
+					numTrees--;
+				}
+			}
+			for (int z = 0; z < edges.size(); z++)
+				edges[z] = make_tuple(0, 0, 0);
+		}
+		return result;
+	}
+
 };
 
 int main(void)
@@ -602,7 +716,8 @@ int main(void)
 	setlocale(LC_ALL, "rus");
 	Graph something;
 	something.readGraph("input.txt");
-	Graph result = something.getSpaingTreePrima();
+	//something.writeGraph("output.txt");
+	Graph result = something.getSpaingTreeBoruvka();
 	result.writeGraph("output.txt");
-	cout << endl;
+	//system("pause");
 }
