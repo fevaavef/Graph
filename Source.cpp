@@ -3,23 +3,15 @@
 #include <iostream>
 #include <string>
 #include <tuple>
-#include <algorithm>
-#include <cstdlib>
 using namespace std;
-char buff[100];
+char buff[10];
 string strng;
 int temp;
-vector<tuple<int, int, int>> vectTuplesss;
-/*vector<vector<pair<int, int>>> list;
+vector<vector<pair<int, int>>> list;
 vector<vector<tuple<int, int, int>>> listm;
 vector<pair<int, int>> vectPairs;
 vector<tuple<int, int, int>> vectTuples;
-vector<vector<int>> matrix;*/
-
-bool TuplesCompare(const tuple<int, int, int> &lhs, const tuple<int, int, int> &rhs)
-{
-	return get<2>(lhs) < get<2>(rhs);
-}
+vector<vector<int>> matrix;
 
 class DSU
 {
@@ -31,14 +23,14 @@ public:
 	{
 		for (int i = 0; i < N; i++)
 		{
-			p.push_back(i+1);
+			p.push_back(i + 1);
 			rank.push_back(0);
 		}
 	}
 	int find(int x)
 	{
 		if (x == 0) return -1;
-		return (x == p[x-1] ? x : p[x-1] = find(p[x-1]));
+		return (x == p[x - 1] ? x : p[x - 1] = find(p[x - 1]));
 	}
 
 	void unite(int x, int y)
@@ -49,13 +41,13 @@ public:
 			return;
 		}
 
-		if (rank[x-1] <  rank[y-1])
-			p[x-1] = y;
+		if (rank[x - 1] <  rank[y - 1])
+			p[x - 1] = y;
 		else
-			p[y-1] = x;
+			p[y - 1] = x;
 
-		if (rank[x-1] == rank[y-1])
-			++rank[x-1];
+		if (rank[x - 1] == rank[y - 1])
+			++rank[x - 1];
 	}
 };
 
@@ -63,17 +55,8 @@ class Graph
 {
 	int indic, vertexAmount, edgesAmount;
 	bool orient, mass;
-	vector<vector<pair<int, int>>> list;
-	vector<vector<tuple<int, int, int>>> listm;
-	vector<pair<int, int>> vectPairs;
-	vector<tuple<int, int, int>> vectTuples;
-	vector<vector<int>> matrix;
 public:
-	Graph(int N = 1)
-	{
-		vertexAmount = N;
-	}
-	void readGraph(string fileName)
+	void ReadGraph(string fileName)
 	{
 		ifstream input(fileName);
 		input >> buff;
@@ -271,7 +254,7 @@ public:
 			}
 		}
 	}
-	void writeGraph(string fileName)
+	void WriteGraph(string fileName)
 	{
 		ofstream output(fileName);
 		if (indic == 1)
@@ -317,7 +300,7 @@ public:
 					output << get<0>(vectTuples[i]) << ' ' << get<1>(vectTuples[i]) << ' ' << get<2>(vectTuples[i]) << endl;
 		}
 	}
-	void addEdge(int from, int to, int weight = 1)
+	void AddEdge(int from, int to, int weight = 1)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = weight;
@@ -344,7 +327,7 @@ public:
 				vectTuples.push_back(tuple<int, int, int>(from, to, weight));
 		}
 	}
-	void removeEdge(int from, int to)
+	void RemoveEdge(int from, int to)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = 0;
@@ -383,7 +366,7 @@ public:
 			}
 		}
 	}
-	int changeEdge(int from, int to, int newWeight)
+	int ChangeEdge(int from, int to, int newWeight)
 	{
 		int oldWeight;
 		if (indic == 1)
@@ -418,7 +401,7 @@ public:
 				}
 		return oldWeight;
 	}
-	void transformToAdjList()
+	void TransformToAdjList()
 	{
 		if (indic == 1)
 		{
@@ -477,7 +460,7 @@ public:
 		}
 		indic = 2;
 	}
-	void transformToListOfEdges()
+	void TransformToListOfEdges()
 	{
 		if (indic == 1)
 		{
@@ -531,7 +514,7 @@ public:
 		}
 		indic = 3;
 	}
-	void transformToAdjMatrix()
+	void TransformToAdjMatrix()
 	{
 		if (indic == 2)
 		{
@@ -599,125 +582,167 @@ public:
 		}
 		indic = 1;
 	}
-	Graph getSpaingTreePrima()
+	bool SecondCondit()
 	{
-		if (indic != 1) transformToAdjMatrix();
-		Graph result(vertexAmount);
-		vector<vector<int>> resMatrix;
-		vector<int> line;
-		unsigned int min = -1, minInLine;
-		int minIndx, idx = 0;
-		for (int i = 0; i < result.vertexAmount; i++)
-		{
-			resMatrix.push_back(vector<int>());
-			for (int j = 0; j < result.vertexAmount; j++)
-				resMatrix[i].push_back(-1);
-		}
-		result.mass = true;
-		result.orient = false;
-		result.indic = 1;
-		line.push_back(1);
-		while (line.size() < result.vertexAmount)
-		{
-			min = -1;
-			for (int item = 0; item<line.size(); item++)
-			{
-				minInLine = -1;
-				minIndx = 0;
-				for (int i = 0; i < resMatrix[item].size(); i++)
-				{
-					if (matrix[item][i] < minInLine && matrix[item][i] != 0 && find(line.begin(), line.end(), i + 1) == line.end())
-					{
-						minInLine = matrix[item][i];
-						minIndx = i;
-					}
-				}
-				if (minInLine < min && find(line.begin(), line.end(), minIndx + 1) == line.end())
-				{
-					min = minInLine;
-					idx = minIndx;
-				}
-			}
-			line.push_back(idx + 1);
-		}
-		for (int i = 0; i < line.size()-1; i++)
-		{
-			resMatrix[line[i] - 1][line[i + 1] - 1] = matrix[line[i] - 1][line[i + 1] - 1];
-			resMatrix[line[i + 1] - 1][line[i] - 1] = matrix[line[i + 1] - 1][line[i] - 1];
-		}
-		result.matrix = resMatrix;
-		return result;
-	}
-	Graph getSpaingTreeKruscal()
-	{
-		if (indic != 3) transformToListOfEdges();
-		Graph result(vertexAmount);
-		result.mass = true;
-		result.orient = false;
-		result.indic = 3;
 		DSU dsu(vertexAmount);
-		sort(vectTuples.begin(), vectTuples.end(), TuplesCompare);
-		for (int i = 0; i < vectTuples.size(); i++)
+		for (int i = 0; i < list.size(); i++)
 		{
-			if (dsu.find(get<0>(vectTuples[i])) != dsu.find(get<1>(vectTuples[i])))
-			{
-				dsu.unite(get<0>(vectTuples[i]), get<1>(vectTuples[i]));
-				result.vectTuples.push_back(make_tuple(get<0>(vectTuples[i]), get<1>(vectTuples[i]), get<2>(vectTuples[i])));
-			}
+			for (int j=0; j<list[i].size();j++)
+			if (dsu.find(list[i][j].first) != dsu.find(list[i][j].second))
+				dsu.unite(list[i][j].first, list[i][j].second);
 		}
-		return result;
-	}
-	Graph getSpaingTreeBoruvka()
-	{
-		if (indic != 3) transformToAdjList();
-		vector<tuple<int, int, int>> edges;
-		Graph result(vertexAmount);
-		result.mass = true;
-		result.orient = false;
-		result.indic = 3;
-		DSU dsu(vertexAmount);
-		int numTrees = vertexAmount;
-		for (int i = 0; i < vertexAmount; i++)
-			edges.push_back(make_tuple(0,0,0)); 
-		while (numTrees > 1)
+		int special,regular=0;
+		special = dsu.p[0];
+		for (int i = 1; i < dsu.p.size(); i++)
 		{
-			for (int i = 0; i < edgesAmount; i++)
+			if (dsu.p[i - 1] == dsu.p[i])
 			{
-				int from = dsu.find(get<0>(vectTuples[i])), to = dsu.find(get<1>(vectTuples[i]));
-				if (from == to)
-						continue;
+				if (regular == 0)
+					swap(regular, special);
+				if (regular != dsu.p[i]) return false;
+			}
+			else
+				if (special == 0)
+					special = dsu.p[i];
 				else
-				{
-					if (get<2>(edges[from-1]) == 0 || get<2>(edges[from-1]) > get<2>(vectTuples[i]))
-						edges[from-1] = vectTuples[i];
-					if (get<2>(edges[to-1]) == 0 || get<2>(edges[to-1]) > get<2>(vectTuples[i]))
-						edges[to-1] = vectTuples[i];
-				}
-			}
-			for (int i = 0; i < edges.size(); i++)
-			{
-				if (dsu.find(get<0>(edges[i])) != dsu.find(get<1>(edges[i])))
-				{
-					dsu.unite(get<0>(edges[i]), get<1>(edges[i]));
-					result.vectTuples.push_back(make_tuple(get<0>(edges[i]), get<1>(edges[i]), get<2>(edges[i])));
-					numTrees--;
-				}
-			}
-			for (int z = 0; z < edges.size(); z++)
-				edges[z] = make_tuple(0, 0, 0);
+					return false;
+		}
+		return true;
+	}
+
+	bool CircleExists()
+	{
+		if (indic != 2) TransformToAdjList();
+		for (int i = 0; i < list.size(); i++)
+			if (list[i].size() % 2 != 0) return false;
+		if (!SecondCondit()) return false;
+		return true;
+	}
+
+	int checkEuler(bool &circleExist)
+	{
+		int result = 0;
+		if (indic != 2) TransformToAdjList();
+		if (circleExist)
+			return 1;
+		else
+		{
+			for (int i = 0; i < list.size(); i++)
+				if (list[i].size() % 2 != 0) result = i+1;
+			if (!SecondCondit()) result = 0;
 		}
 		return result;
 	}
 
+	vector<int> getEuleranTourEffective()
+	{
+		if (indic != 2) TransformToAdjList();
+		edgesAmount = 0;
+		vector<vector<pair<int, int>>> listCl = list;
+		vector<int> result, stack; 
+		bool isCircle = CircleExists();
+		int from;
+		if (checkEuler(isCircle) != 0) stack.push_back(checkEuler(isCircle));
+		else return result;
+		while (stack.size() != 0)
+		{
+			from = stack.back();
+			if (listCl[from - 1].size() != 0)
+			{
+				int to = listCl[from - 1][0].second;
+				stack.push_back(listCl[from - 1][0].second);
+				listCl[from - 1].erase(listCl[from-1].begin());
+				for (int i = 0; i < listCl[to - 1].size(); i++)
+					if (listCl[to - 1][i].second == from)
+						listCl[to - 1].erase(listCl[to - 1].begin() + i);
+			}
+			if (from == stack.back())
+			{
+				stack.erase(stack.end() - 1);
+				cout << from << ' ';
+			}
+		}
+		return stack;
+	}
+
+	vector<int> getEuleranTourFleri()
+	{
+		if (indic != 2) TransformToAdjList();
+		edgesAmount = 0;
+		for (int i = 0; i < list.size(); i++)
+			edgesAmount += list[i].size();
+		edgesAmount /= 2;
+		vector<vector<pair<int, int>>> listCl = list;
+		vector<int> result;
+		bool isCircle = CircleExists();
+		if (checkEuler(isCircle) != 0) result.push_back(checkEuler(isCircle));
+		else return result;
+     	return RecBase(result[result.size() - 1], result, listCl);
+	}
+
+	vector<int> RecBase(int currentVert, vector<int> result, vector<vector<pair<int, int>>> listCl)
+	{
+		bool added = false;
+		for (int i = 0; i < listCl[currentVert - 1].size(); i++)
+		{
+			if (!IfBridge(listCl[currentVert - 1][i],listCl) || ((i == listCl[currentVert - 1].size()-1) && !added))
+			{
+					int oldVert = currentVert;
+					result.push_back(listCl[currentVert - 1][i].second);
+					currentVert = listCl[currentVert - 1][i].second;
+					listCl[oldVert - 1].erase(listCl[oldVert - 1].begin() + i);
+					for (int j = 0; j < listCl[currentVert - 1].size(); j++)
+						if (listCl[currentVert - 1][j].second == oldVert)
+							listCl[currentVert - 1].erase(listCl[currentVert - 1].begin() + j);
+					added = true;
+					break;
+			}
+		}
+		if (result.size()<edgesAmount)result=RecBase(currentVert, result, listCl);
+		else if (CircleExists()) result.push_back(result[0]);
+		return result;
+	}
+
+	bool IfBridge(pair<int,int> edge, vector<vector<pair<int, int>>> listCl)
+	{
+		vector<int> queue, visited, visitedStart;
+		queue.push_back(edge.first);
+		while (queue.size()!=0)
+		{
+			for (int i = 0; i<listCl[queue.back() - 1].size(); i++)
+				if (!((listCl[queue.back() - 1][i].first == edge.first && listCl[queue.back() - 1][i].second == edge.second) ||
+					(listCl[queue.back() - 1][i].first == edge.second && listCl[queue.back() - 1][i].second == edge.first)) 
+					&& find(visited.begin(), visited.end(), listCl[queue.back() - 1][i].second) == visited.end()
+					&& find(queue.begin(), queue.end(), listCl[queue.back() - 1][i].second) == queue.end())
+					queue.insert(queue.begin(), listCl[queue.back() - 1][i].second);
+			visited.push_back(queue.back());
+			queue.erase(queue.end() - 1, queue.end());
+		}
+		queue.push_back(edge.first);
+		while (queue.size() != 0)
+		{
+			for (int i = 0; i<listCl[queue.back() - 1].size(); i++)
+				if (find(visitedStart.begin(), visitedStart.end(), listCl[queue.back() - 1][i].second) == visitedStart.end()
+					&& find(queue.begin(), queue.end(), listCl[queue.back() - 1][i].second) == queue.end())
+					queue.insert(queue.begin(), listCl[queue.back() - 1][i].second);
+			visitedStart.push_back(queue.back());
+			queue.erase(queue.end() - 1, queue.end());
+		}
+		return (visited.size() != visitedStart.size());
+	}
 };
 
 int main(void)
 {
 	setlocale(LC_ALL, "rus");
 	Graph something;
-	something.readGraph("input.txt");
-	//something.writeGraph("output.txt");
-	Graph result = something.getSpaingTreeBoruvka();
-	result.writeGraph("output.txt");
-	//system("pause");
+	something.ReadGraph("input.txt");
+	something.WriteGraph("output.txt");
+	//cout << something.CircleExists();
+	vector<int> result= something.getEuleranTourEffective();
+	for (int i = 0; i < result.size(); i++)
+		cout << result[i] << ' ';
+	system("pause");
+	//something.TransformToAdjList();
+	//something.WriteGraph("output.txt");
 }
