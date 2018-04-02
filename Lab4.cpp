@@ -402,7 +402,7 @@ public:
 				}
 		return oldWeight;
 	}
-	void transformToAdjList()
+	void TransformToAdjList()
 	{
 		if (indic == 1)
 		{
