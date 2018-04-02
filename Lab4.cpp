@@ -57,7 +57,7 @@ class Graph
 	int indic, vertexAmount, edgesAmount;
 	bool orient, mass;
 public:
-	void ReadGraph(string fileName)
+	void readGraph(string fileName)
 	{
 		ifstream input(fileName);
 		input >> buff;
@@ -255,7 +255,7 @@ public:
 			}
 		}
 	}
-	void WriteGraph(string fileName)
+	void writeGraph(string fileName)
 	{
 		ofstream output(fileName);
 		if (indic == 1)
@@ -301,7 +301,7 @@ public:
 					output << get<0>(vectTuples[i]) << ' ' << get<1>(vectTuples[i]) << ' ' << get<2>(vectTuples[i]) << endl;
 		}
 	}
-	void AddEdge(int from, int to, int weight = 1)
+	void addEdge(int from, int to, int weight = 1)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = weight;
@@ -328,7 +328,7 @@ public:
 				vectTuples.push_back(tuple<int, int, int>(from, to, weight));
 		}
 	}
-	void RemoveEdge(int from, int to)
+	void removeEdge(int from, int to)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = 0;
@@ -367,7 +367,7 @@ public:
 			}
 		}
 	}
-	int ChangeEdge(int from, int to, int newWeight)
+	int changeEdge(int from, int to, int newWeight)
 	{
 		int oldWeight;
 		if (indic == 1)
@@ -402,7 +402,7 @@ public:
 				}
 		return oldWeight;
 	}
-	void TransformToAdjList()
+	void transformToAdjList()
 	{
 		if (indic == 1)
 		{
@@ -461,7 +461,7 @@ public:
 		}
 		indic = 2;
 	}
-	void TransformToListOfEdges()
+	void transformToListOfEdges()
 	{
 		if (indic == 1)
 		{
@@ -515,7 +515,7 @@ public:
 		}
 		indic = 3;
 	}
-	void TransformToAdjMatrix()
+	void transformToAdjMatrix()
 	{
 		if (indic == 2)
 		{
@@ -624,10 +624,6 @@ public:
 					return FindChain(bipart[i].first, bipart, visited, oldQueue, marks);
 				}
 
-		if (vert == 1)
-		{
-			cout << "A";
-		}
 		vector<int> newQueue;
 		visited.push_back(vert);
 		for (int i = 0; i < oldQueue.size(); i++)
@@ -678,10 +674,6 @@ public:
 							notVis = false;
 					if (FindChain(newQueue[0], bipart, visited, newQueue, marks))
 					{
-						if (vert == 1)
-						{
-							cout << newQueue[0] << '*';
-						}
 						if (marks[oldQueue[i] - 1] == 'B') return true;
 						bool changed = false;
 						for (int k = 0; k < bipart.size(); k++)
@@ -727,9 +719,6 @@ public:
 			if (marks[i] != 'A') continue;
 			FindChain(i+1, bipart, visited, queue, marks);
 			visited = vector<int>();
-			for (int i = 0; i < bipart.size(); i++)
-				cout << bipart[i].first << ' ' << bipart[i].second << endl;
-			cout << "----------------------------------------------------"<<endl;
 		}
 		for (int i = 0; i < bipart.size(); i++)
 			if (bipart[i].first == -1)
