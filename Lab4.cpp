@@ -14,50 +14,12 @@ vector<pair<int, int>> vectPairs;
 vector<tuple<int, int, int>> vectTuples;
 vector<vector<int>> matrix;
 
-class DSU
-{
-private:
-public:
-	vector<int> p, rank;
-	bool victory = true;
-	DSU(int N)
-	{
-		for (int i = 0; i < N; i++)
-		{
-			p.push_back(i + 1);
-			rank.push_back(0);
-		}
-	}
-	int find(int x)
-	{
-		if (x == 0) return -1;
-		return (x == p[x - 1] ? x : p[x - 1] = find(p[x - 1]));
-	}
-
-	void unite(int x, int y)
-	{
-		if ((x = find(x)) == (y = find(y)))
-		{
-			victory = false;
-			return;
-		}
-
-		if (rank[x - 1] <  rank[y - 1])
-			p[x - 1] = y;
-		else
-			p[y - 1] = x;
-
-		if (rank[x - 1] == rank[y - 1])
-			++rank[x - 1];
-	}
-};
-
 class Graph
 {
 	int indic, vertexAmount, edgesAmount;
 	bool orient, mass;
 public:
-	void readGraph(string fileName)
+	void ReadGraph(string fileName)
 	{
 		ifstream input(fileName);
 		input >> buff;
@@ -255,11 +217,16 @@ public:
 			}
 		}
 	}
-	void writeGraph(string fileName)
+	void WriteGraph(string fileName)
 	{
 		ofstream output(fileName);
 		if (indic == 1)
 		{
+			output << "C" << ' ' << vertexAmount << endl;
+			orient ? output << 1 : output << 0;
+			output << ' ';
+			mass ? output << 1 : output << 0;
+			output << endl;
 			for (int i = 0; i < matrix.size(); i++)
 			{
 				output << matrix[i][0];
@@ -270,6 +237,11 @@ public:
 		}
 		if (indic == 2)
 		{
+			output << "L" << ' ' << vertexAmount << endl;
+			orient ? output << 1 : output << 0;
+			output << ' ';
+			mass ? output << 1 : output << 0;
+			output << endl;
 			if (!mass)
 			{
 				for (int i = 0; i < list.size(); i++)
@@ -293,15 +265,21 @@ public:
 		}
 		if (indic == 3)
 		{
+			output << "E" << ' ' << vertexAmount << ' ' << edgesAmount << endl;
+			orient ? output << 1 : output << 0;
+			output << ' ';
+			mass ? output << 1 : output << 0;
+			output << endl;
 			if (!mass)
 				for (int i = 0; i < vectPairs.size(); i++)
 					output << vectPairs[i].first << ' ' << vectPairs[i].second << endl;
 			else
 				for (int i = 0; i < vectTuples.size(); i++)
-					output << get<0>(vectTuples[i]) << ' ' << get<1>(vectTuples[i]) << ' ' << get<2>(vectTuples[i]) << endl;
+					if (get<2>(vectTuples[i]) != -1)
+						output << get<0>(vectTuples[i]) << ' ' << get<1>(vectTuples[i]) << ' ' << get<2>(vectTuples[i]) << endl;
 		}
 	}
-	void addEdge(int from, int to, int weight = 1)
+	void AddEdge(int from, int to, int weight = 1)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = weight;
@@ -328,7 +306,7 @@ public:
 				vectTuples.push_back(tuple<int, int, int>(from, to, weight));
 		}
 	}
-	void removeEdge(int from, int to)
+	void RemoveEdge(int from, int to)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = 0;
@@ -367,7 +345,7 @@ public:
 			}
 		}
 	}
-	int changeEdge(int from, int to, int newWeight)
+	int ChangeEdge(int from, int to, int newWeight)
 	{
 		int oldWeight;
 		if (indic == 1)
@@ -461,7 +439,7 @@ public:
 		}
 		indic = 2;
 	}
-	void transformToListOfEdges()
+	void TransformToListOfEdges()
 	{
 		if (indic == 1)
 		{
@@ -515,7 +493,7 @@ public:
 		}
 		indic = 3;
 	}
-	void transformToAdjMatrix()
+	void TransformToAdjMatrix()
 	{
 		if (indic == 2)
 		{
@@ -614,8 +592,10 @@ public:
 
 	bool FindChain(int vert, vector<pair<int, int>> &bipart, vector<int> &visited, vector<int> oldQueue, vector<char> &marks)
 	{
-		if (find(visited.begin(), visited.end(), vert) != visited.end()) return false;
+		if (find(visited.begin(), visited.end(), vert) != visited.end()) { cout << "ALREADY IN VISITED: " << vert << endl; return false; }
+		visited.push_back(vert);
 		if (marks[vert - 1] == 'B')
+		{
 			for (int i = 0; i < bipart.size(); i++)
 				if (bipart[i].second == vert)
 				{
@@ -623,48 +603,13 @@ public:
 					oldQueue.push_back(bipart[i].first);
 					return FindChain(bipart[i].first, bipart, visited, oldQueue, marks);
 				}
-
+		}
 		vector<int> newQueue;
-		visited.push_back(vert);
-		for (int i = 0; i < oldQueue.size(); i++)
-			for (int j = 0; j < list[oldQueue[i]-1].size(); j++)
-		    {
-				newQueue.push_back(list[oldQueue[i] - 1][j].second);
-				if (find(visited.begin(), visited.end(), list[oldQueue[i] - 1][j].second) == visited.end())
-				{
-					int to = list[oldQueue[i] - 1][j].second;
-					bool notVis = true;
-					for (int k = 0; k < bipart.size(); k++)
-						if ((bipart[k].second == to && marks[oldQueue[i]-1] == 'A') || (bipart[k].first == to && marks[oldQueue[i] - 1] == 'B'))
-							notVis = false;
-					if (notVis)
-					{
-						//if (vert == 7) cout << oldQueue[i];
-						if (marks[oldQueue[i] - 1] == 'B') return true;
-						bool changed = false;
-						for (int k = 0; k < bipart.size(); k++)
-							if (bipart[k].first == vert)
-							{
-								changed = true;
-								bipart[k].second = to;
-								break;
-							}
-						if (!changed)
-							for (int k = 0; k < bipart.size(); k++)
-								if (bipart[k].first == -1)
-								{
-									bipart[k].first = vert;
-									bipart[k].second = to;
-									break;
-								}
-						return true;
-					}
-			    }
-		    }
 		for (int i = 0; i < oldQueue.size(); i++)
 			for (int j = 0; j < list[oldQueue[i] - 1].size(); j++)
 			{
-				newQueue.push_back(list[oldQueue[i] - 1][j].second);
+				if (find(oldQueue.begin(), oldQueue.end(), list[oldQueue[i] - 1][j].second) == oldQueue.end())
+					newQueue.push_back(list[oldQueue[i] - 1][j].second);
 				if (find(visited.begin(), visited.end(), list[oldQueue[i] - 1][j].second) == visited.end())
 				{
 					int to = list[oldQueue[i] - 1][j].second;
@@ -672,7 +617,7 @@ public:
 					for (int k = 0; k < bipart.size(); k++)
 						if ((bipart[k].second == to && marks[oldQueue[i] - 1] == 'A') || (bipart[k].first == to && marks[oldQueue[i] - 1] == 'B'))
 							notVis = false;
-					if (FindChain(newQueue[0], bipart, visited, newQueue, marks))
+					if (notVis)
 					{
 						if (marks[oldQueue[i] - 1] == 'B') return true;
 						bool changed = false;
@@ -695,7 +640,40 @@ public:
 					}
 				}
 			}
-
+		for (int i = 0; i < oldQueue.size(); i++)
+			for (int j = 0; j < list[oldQueue[i] - 1].size(); j++)
+			{
+				if (find(visited.begin(), visited.end(), list[oldQueue[i] - 1][j].second) == visited.end())
+				{
+					int to = list[oldQueue[i] - 1][j].second;
+					bool notVis = true;
+					for (int k = 0; k < bipart.size(); k++)
+						if ((bipart[k].second == to && marks[oldQueue[i] - 1] == 'A') || (bipart[k].first == to && marks[oldQueue[i] - 1] == 'B'))
+							notVis = false;
+					if (find(visited.begin(), visited.end(), to) != visited.end()) continue;
+					if (FindChain(to, bipart, visited, newQueue, marks))
+					{
+						if (marks[oldQueue[i] - 1] == 'B') return true;
+						bool changed = false;
+						for (int k = 0; k < bipart.size(); k++)
+							if (bipart[k].first == vert)
+							{
+								changed = true;
+								bipart[k].second = to;
+								break;
+							}
+						if (!changed)
+							for (int k = 0; k < bipart.size(); k++)
+								if (bipart[k].first == -1)
+								{
+									bipart[k].first = vert;
+									bipart[k].second = to;
+									break;
+								}
+						return true;
+					}
+				}
+			}
 		return false;
 	}
 
@@ -706,23 +684,21 @@ public:
 		vector<int> queue, visited;
 		for (int i = 0; i < vertexAmount; i++)
 			marks.push_back(' ');
-		if (checkBipart(marks) == 0) return bipart;
-		//for (int i = 0; i < marks.size(); i++)
-			//cout << marks[i]<<' ';
+		if (checkBipart(marks) == 0) { cout << "no no no"; return bipart; }
 		for (int i = 0; i < marks.size(); i++)
 			if (marks[i] == 'A')
-				bipart.push_back(pair<int, int>(-1,-1));
+				bipart.push_back(pair<int, int>(-1, -1));
 		queue.push_back(0);
 		for (int i = 0; i < vertexAmount; i++)
 		{
 			queue[0] = i + 1;
 			if (marks[i] != 'A') continue;
-			FindChain(i+1, bipart, visited, queue, marks);
+			FindChain(i + 1, bipart, visited, queue, marks);
 			visited = vector<int>();
 		}
 		for (int i = 0; i < bipart.size(); i++)
 			if (bipart[i].first == -1)
-				bipart.erase(bipart.begin()+i);
+				bipart.erase(bipart.begin() + i);
 		return bipart;
 	}
 };
@@ -733,9 +709,10 @@ int main(void)
 	Graph something;
 	something.ReadGraph("input.txt");
 	something.WriteGraph("output.txt");
-	vector<pair<int,int>> amoeba = something.getMaximumMatchingBipart();
+	vector<pair<int, int>> amoeba = something.getMaximumMatchingBipart();
+	cout << "FINAL" << endl;
 	for (int i = 0; i < amoeba.size(); i++)
-		cout << amoeba[i].first << ' ' << amoeba[i].second<<endl;
+		cout << amoeba[i].first << ' ' << amoeba[i].second << endl;
 	system("pause");
 	//cout << something.CircleExists();
 	//vector<int> result = something.getEuleranTourEffective();
