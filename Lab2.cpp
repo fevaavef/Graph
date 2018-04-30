@@ -620,13 +620,6 @@ public:
 		vector<int> line;
 		unsigned int min = -1, minInLine;
 		int minIndx, idx = -1, from=0;
-		for (int i = 0; i < result.vertexAmount; i++)
-		{
-			resMatrix.push_back(vector<int>()); //
-			resList.push_back(vector<tuple<int, int, int>>());
-			for (int j = 0; j < result.vertexAmount; j++) //
-				resMatrix[i].push_back(-1);  //
-		}
 		return getSpaingTreeKruscal();
 		result.mass = true;
 		result.orient = false;
