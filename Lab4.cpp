@@ -746,7 +746,6 @@ public:
 		return bipart;
 	}
 };
-};
 
 int main(void)
 {
