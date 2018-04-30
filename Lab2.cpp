@@ -614,18 +614,20 @@ public:
 	}
 	Graph getSpaingTreePrima()
 	{
-		if (indic != 1) transformToAdjMatrix();
 		Graph result(vertexAmount);
 		vector<vector<int>> resMatrix;
+		vector<vector<tuple<int, int, int>>> resList;
 		vector<int> line;
 		unsigned int min = -1, minInLine;
 		int minIndx, idx = -1, from=0;
 		for (int i = 0; i < result.vertexAmount; i++)
 		{
-			resMatrix.push_back(vector<int>());
-			for (int j = 0; j < result.vertexAmount; j++)
-				resMatrix[i].push_back(-1);
+			resMatrix.push_back(vector<int>()); //
+			resList.push_back(vector<tuple<int, int, int>>());
+			for (int j = 0; j < result.vertexAmount; j++) //
+				resMatrix[i].push_back(-1);  //
 		}
+		return getSpaingTreeKruscal();
 		result.mass = true;
 		result.orient = false;
 		result.indic = 1;
@@ -638,29 +640,35 @@ public:
 			{
 				minInLine = -1;
 				minIndx = 0;
-				for (int i = 0; i < resMatrix[line[item]-1].size(); i++)
+				for (int i = 0; i < listm[line[item]-1].size(); i++)
 				{
-					if (matrix[line[item] - 1][i] < minInLine && matrix[line[item] - 1][i] != 0 && find(line.begin(), line.end(), i + 1) == line.end())
+					if (get<2>(listm[line[item] - 1][i]) < minInLine && get<2>(listm[line[item] - 1][i]) != 0 && find(line.begin(), line.end(), get<1>(listm[line[item] - 1][i])) == line.end())
 					{
-						minInLine = matrix[line[item] - 1][i];
-						minIndx = i;
+						minInLine = get<2>(listm[line[item] - 1][i]);
+						minIndx = get<1>(listm[line[item] - 1][i])-1;
 					}
 				}
 				if (minInLine < min && find(line.begin(), line.end(), minIndx + 1) == line.end())
 				{
 					min = minInLine;
 					idx = minIndx;
+					cout << idx<<endl;
 					from = line[item] - 1;
 				}
 			}
 			if (idx != -1)
 			{
-				resMatrix[from][idx] = matrix[from][idx];
+				cout << from<<endl;
+				for (int z=0;z<listm[from].size();z++)
+					if (get<1>(listm[from][z])==idx)
+						resList[from].push_back(make_tuple(from + 1, idx + 1, get<2>(listm[from][z])));
 				line.push_back(idx + 1);
 			}
+			system("pause");
 		}
-		result.matrix = resMatrix;
+		result.listm = resList;
 		result.edgesAmount = vertexAmount - 1;
+
 		return result;
 	}
 	Graph getSpaingTreeKruscal()
