@@ -587,50 +587,12 @@ public:
 			visited.push_back(queue.back());
 			queue.erase(queue.end() - 1, queue.end());
 		}
-		for (int i = 0; i < marks.size(); i++)
-			if (marks[i] != 'A' && marks[i] != 'B') { checkBipartIter(marks, i); break; };
-		for (int i = 0; i < marks.size(); i++)
-			cout << marks[i] << ' ';
-		cout << endl;
-		return 1;
-	}
-
-	int checkBipartIter(vector<char> &marks, int start)
-	{
-		if (indic != 2) TransformToAdjList();
-		vector<int> queue, visited;
-		marks[start] = 'A';
-		queue.push_back(start + 1);
-		visited.push_back(start + 1);
-		while (queue.size() != 0)
-		{
-			for (int i = 0; i < list[queue.back() - 1].size(); i++)
-			{
-				if (find(visited.begin(), visited.end(), list[queue.back() - 1][i].second) == visited.end() && find(queue.begin(), queue.end(), list[queue.back() - 1][i].second) == queue.end())
-					queue.insert(queue.begin(), list[queue.back() - 1][i].second);
-				if (marks[list[queue.back() - 1][i].second - 1] == ' ')
-					if (marks[queue.back() - 1] == 'A')
-						marks[list[queue.back() - 1][i].second - 1] = 'B';
-					else
-						marks[list[queue.back() - 1][i].second - 1] = 'A';
-				else
-					if (marks[list[queue.back() - 1][i].second - 1] == marks[queue.back() - 1])
-						return 0;
-			}
-			visited.push_back(queue.back());
-			queue.erase(queue.end() - 1, queue.end());
-		}
-		for (int i = 0; i < marks.size(); i++)
-			if (marks[i] != 'A' && marks[i] != 'B') { checkBipartIter(marks, i); break; };
-		for (int i = 0; i < marks.size(); i++)
-			cout << marks[i] << ' ';
-		cout << endl;
 		return 1;
 	}
 
 	bool FindChain(int vert, vector<pair<int, int>> &bipart, vector<int> &visited, vector<int> oldQueue, vector<char> &marks)
 	{
-		if (find(visited.begin(), visited.end(), vert) != visited.end()) {  return false; }
+		if (find(visited.begin(), visited.end(), vert) != visited.end()) { cout << "ALREADY IN VISITED: " << vert << endl; return false; }
 		visited.push_back(vert);
 		if (marks[vert - 1] == 'B')
 		{
@@ -722,7 +684,7 @@ public:
 		vector<int> queue, visited;
 		for (int i = 0; i < vertexAmount; i++)
 			marks.push_back(' ');
-		if (checkBipart(marks) == 0) {  return bipart; }
+		if (checkBipart(marks) == 0) { cout << "no no no"; return bipart; }
 		for (int i = 0; i < marks.size(); i++)
 			if (marks[i] == 'A')
 				bipart.push_back(pair<int, int>(-1, -1));
@@ -735,37 +697,8 @@ public:
 			visited = vector<int>();
 		}
 		for (int i = 0; i < bipart.size(); i++)
-		{
-			cout << bipart[i].first << endl;
-			if (bipart[i].first < 0)
-			{
+			if (bipart[i].first == -1)
 				bipart.erase(bipart.begin() + i);
-			}
-		}
-		for (int i = 0; i < bipart.size(); i++)
-		{
-			cout << bipart[i].first << endl;
-			if (bipart[i].first < 0)
-			{
-				bipart.erase(bipart.begin() + i);
-			}
-		}
-		for (int i = 0; i < bipart.size(); i++)
-		{
-			cout << bipart[i].first << endl;
-			if (bipart[i].first < 0)
-			{
-				bipart.erase(bipart.begin() + i);
-			}
-		}
-		for (int i = 0; i < bipart.size(); i++)
-		{
-			cout << bipart[i].first << endl;
-			if (bipart[i].first < 0)
-			{
-				bipart.erase(bipart.begin() + i);
-			}
-		}
 		return bipart;
 	}
 };
