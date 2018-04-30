@@ -562,13 +562,13 @@ public:
 		indic = 1;
 	}
 
-	int checkBipart(vector<char> &marks, int start)
+	int checkBipart(vector<char> &marks)
 	{
 		if (indic != 2) TransformToAdjList();
 		vector<int> queue, visited;
-		marks[start] = 'A';
-		queue.push_back(start+1);
-		visited.push_back(start+1);
+		marks[0] = 'A';
+		queue.push_back(1);
+		visited.push_back(1);
 		while (queue.size() != 0)
 		{
 			for (int i = 0; i < list[queue.back() - 1].size(); i++)
@@ -588,7 +588,40 @@ public:
 			queue.erase(queue.end() - 1, queue.end());
 		}
 		for (int i = 0; i < marks.size(); i++)
-			if (marks[i] != 'A' && marks[i] != 'B') { checkBipart(marks, i); break; };
+			if (marks[i] != 'A' && marks[i] != 'B') { checkBipartIter(marks, i); break; };
+		for (int i = 0; i < marks.size(); i++)
+			cout << marks[i] << ' ';
+		cout << endl;
+		return 1;
+	}
+
+	int checkBipartIter(vector<char> &marks, int start)
+	{
+		if (indic != 2) TransformToAdjList();
+		vector<int> queue, visited;
+		marks[start] = 'A';
+		queue.push_back(start + 1);
+		visited.push_back(start + 1);
+		while (queue.size() != 0)
+		{
+			for (int i = 0; i < list[queue.back() - 1].size(); i++)
+			{
+				if (find(visited.begin(), visited.end(), list[queue.back() - 1][i].second) == visited.end() && find(queue.begin(), queue.end(), list[queue.back() - 1][i].second) == queue.end())
+					queue.insert(queue.begin(), list[queue.back() - 1][i].second);
+				if (marks[list[queue.back() - 1][i].second - 1] == ' ')
+					if (marks[queue.back() - 1] == 'A')
+						marks[list[queue.back() - 1][i].second - 1] = 'B';
+					else
+						marks[list[queue.back() - 1][i].second - 1] = 'A';
+				else
+					if (marks[list[queue.back() - 1][i].second - 1] == marks[queue.back() - 1])
+						return 0;
+			}
+			visited.push_back(queue.back());
+			queue.erase(queue.end() - 1, queue.end());
+		}
+		for (int i = 0; i < marks.size(); i++)
+			if (marks[i] != 'A' && marks[i] != 'B') { checkBipartIter(marks, i); break; };
 		for (int i = 0; i < marks.size(); i++)
 			cout << marks[i] << ' ';
 		cout << endl;
@@ -689,7 +722,7 @@ public:
 		vector<int> queue, visited;
 		for (int i = 0; i < vertexAmount; i++)
 			marks.push_back(' ');
-		if (checkBipart(marks,0) == 0) {  return bipart; }
+		if (checkBipart(marks) == 0) {  return bipart; }
 		for (int i = 0; i < marks.size(); i++)
 			if (marks[i] == 'A')
 				bipart.push_back(pair<int, int>(-1, -1));
