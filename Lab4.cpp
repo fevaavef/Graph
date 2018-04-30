@@ -562,7 +562,7 @@ public:
 		indic = 1;
 	}
 
-int checkBipart(vector<char> &marks)
+	int checkBipart(vector<char> &marks)
 	{
 		if (indic != 2) TransformToAdjList();
 		vector<int> queue, visited;
@@ -587,8 +587,6 @@ int checkBipart(vector<char> &marks)
 			visited.push_back(queue.back());
 			queue.erase(queue.end() - 1, queue.end());
 		}
-		//for (int z = 0; z < marks.size(); z++)
-			//if (marks[z] == ' ') checkBipartIter(marks, z);
 		return 1;
 	}
 
@@ -699,19 +697,19 @@ int checkBipart(vector<char> &marks)
 			visited = vector<int>();
 		}
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first < 0)
+			if (bipart[i].first == -1)
 				bipart.erase(bipart.begin() + i);
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first < 0)
+			if (bipart[i].first == -1)
 				bipart.erase(bipart.begin() + i);
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first < 0)
+			if (bipart[i].first == -1)
 				bipart.erase(bipart.begin() + i);
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first < 0)
+			if (bipart[i].first == -1)
 				bipart.erase(bipart.begin() + i);
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first < 0)
+			if (bipart[i].first == -1)
 				bipart.erase(bipart.begin() + i);
 		return bipart;
 	}
