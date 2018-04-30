@@ -709,7 +709,7 @@ public:
 		return false;
 	}
 
-	vector<pair<int, int>>getMaximumMatchingBipart()
+		vector<pair<int, int>>getMaximumMatchingBipart()
 	{
 		vector<pair<int, int>> bipart;
 		vector<char> marks;
@@ -729,10 +729,23 @@ public:
 			visited = vector<int>();
 		}
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first == -1)
+			if (bipart[i].first < 0)
+				bipart.erase(bipart.begin() + i);
+		for (int i = 0; i < bipart.size(); i++)
+			if (bipart[i].first < 0)
+				bipart.erase(bipart.begin() + i);
+		for (int i = 0; i < bipart.size(); i++)
+			if (bipart[i].first < 0)
+				bipart.erase(bipart.begin() + i);
+		for (int i = 0; i < bipart.size(); i++)
+			if (bipart[i].first < 0)
+				bipart.erase(bipart.begin() + i);
+		for (int i = 0; i < bipart.size(); i++)
+			if (bipart[i].first < 0)
 				bipart.erase(bipart.begin() + i);
 		return bipart;
 	}
+};
 };
 
 int main(void)
