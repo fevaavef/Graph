@@ -19,7 +19,7 @@ class Graph
 	int indic, vertexAmount, edgesAmount;
 	bool orient, mass;
 public:
-	void ReadGraph(string fileName)
+	void readGraph(string fileName)
 	{
 		ifstream input(fileName);
 		input >> buff;
@@ -217,7 +217,7 @@ public:
 			}
 		}
 	}
-	void WriteGraph(string fileName)
+	void writeGraph(string fileName)
 	{
 		ofstream output(fileName);
 		if (indic == 1)
@@ -279,7 +279,7 @@ public:
 						output << get<0>(vectTuples[i]) << ' ' << get<1>(vectTuples[i]) << ' ' << get<2>(vectTuples[i]) << endl;
 		}
 	}
-	void AddEdge(int from, int to, int weight = 1)
+	void addEdge(int from, int to, int weight = 1)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = weight;
@@ -306,7 +306,7 @@ public:
 				vectTuples.push_back(tuple<int, int, int>(from, to, weight));
 		}
 	}
-	void RemoveEdge(int from, int to)
+	void removeEdge(int from, int to)
 	{
 		if (indic == 1)
 			matrix[from - 1][to - 1] = 0;
@@ -345,7 +345,7 @@ public:
 			}
 		}
 	}
-	int ChangeEdge(int from, int to, int newWeight)
+	int changeEdge(int from, int to, int newWeight)
 	{
 		int oldWeight;
 		if (indic == 1)
@@ -380,7 +380,7 @@ public:
 				}
 		return oldWeight;
 	}
-	void TransformToAdjList()
+	void transformToAdjList()
 	{
 		if (indic == 1)
 		{
@@ -439,7 +439,7 @@ public:
 		}
 		indic = 2;
 	}
-	void TransformToListOfEdges()
+	void transformToListOfEdges()
 	{
 		if (indic == 1)
 		{
@@ -493,7 +493,7 @@ public:
 		}
 		indic = 3;
 	}
-	void TransformToAdjMatrix()
+	void transformToAdjMatrix()
 	{
 		if (indic == 2)
 		{
