@@ -562,13 +562,13 @@ public:
 		indic = 1;
 	}
 
-	int checkBipart(vector<char> &marks)
+	int checkBipart(vector<char> &marks, int start)
 	{
 		if (indic != 2) TransformToAdjList();
 		vector<int> queue, visited;
-		marks[0] = 'A';
-		queue.push_back(1);
-		visited.push_back(1);
+		marks[start] = 'A';
+		queue.push_back(start+1);
+		visited.push_back(start+1);
 		while (queue.size() != 0)
 		{
 			for (int i = 0; i < list[queue.back() - 1].size(); i++)
@@ -587,12 +587,17 @@ public:
 			visited.push_back(queue.back());
 			queue.erase(queue.end() - 1, queue.end());
 		}
+		for (int i = 0; i < marks.size(); i++)
+			if (marks[i] != 'A' && marks[i] != 'B') { checkBipart(marks, i); break; };
+		for (int i = 0; i < marks.size(); i++)
+			cout << marks[i] << ' ';
+		cout << endl;
 		return 1;
 	}
 
 	bool FindChain(int vert, vector<pair<int, int>> &bipart, vector<int> &visited, vector<int> oldQueue, vector<char> &marks)
 	{
-		if (find(visited.begin(), visited.end(), vert) != visited.end()) { cout << "ALREADY IN VISITED: " << vert << endl; return false; }
+		if (find(visited.begin(), visited.end(), vert) != visited.end()) {  return false; }
 		visited.push_back(vert);
 		if (marks[vert - 1] == 'B')
 		{
@@ -684,7 +689,7 @@ public:
 		vector<int> queue, visited;
 		for (int i = 0; i < vertexAmount; i++)
 			marks.push_back(' ');
-		if (checkBipart(marks) == 0) { cout << "no no no"; return bipart; }
+		if (checkBipart(marks,0) == 0) {  return bipart; }
 		for (int i = 0; i < marks.size(); i++)
 			if (marks[i] == 'A')
 				bipart.push_back(pair<int, int>(-1, -1));
@@ -697,8 +702,37 @@ public:
 			visited = vector<int>();
 		}
 		for (int i = 0; i < bipart.size(); i++)
-			if (bipart[i].first == -1)
+		{
+			cout << bipart[i].first << endl;
+			if (bipart[i].first < 0)
+			{
 				bipart.erase(bipart.begin() + i);
+			}
+		}
+		for (int i = 0; i < bipart.size(); i++)
+		{
+			cout << bipart[i].first << endl;
+			if (bipart[i].first < 0)
+			{
+				bipart.erase(bipart.begin() + i);
+			}
+		}
+		for (int i = 0; i < bipart.size(); i++)
+		{
+			cout << bipart[i].first << endl;
+			if (bipart[i].first < 0)
+			{
+				bipart.erase(bipart.begin() + i);
+			}
+		}
+		for (int i = 0; i < bipart.size(); i++)
+		{
+			cout << bipart[i].first << endl;
+			if (bipart[i].first < 0)
+			{
+				bipart.erase(bipart.begin() + i);
+			}
+		}
 		return bipart;
 	}
 };
